@@ -2,16 +2,16 @@
 
 const controller = require('lib/wiring/controller')
 const models = require('app/models')
-const Item = models.item
+const listItem = models.listItem
 
 const authenticate = require('./concerns/authenticate')
 const setUser = require('./concerns/set-current-user')
 const setModel = require('./concerns/set-mongoose-model')
 
 const index = (req, res, next) => {
-  Item.find({_owner: req.user._id})
-    .then(items => res.json({
-      items: items.map((e) =>
+  listItem.findById({ _id: req.user._id })
+    .then(listItems => res.json({
+      listItems: listItems.map((e) =>
         e.toJSON({ virtuals: true, user: req.user }))
     }))
     .catch(next)
@@ -19,33 +19,33 @@ const index = (req, res, next) => {
 
 const show = (req, res) => {
   res.json({
-    item: req.item.toJSON({ virtuals: true, user: req.user })
+    listItem: req.listItem.toJSON({ virtuals: true, user: req.user })
   })
 }
 
 const create = (req, res, next) => {
-  const item = Object.assign(req.body.item, {
+  const listItem = Object.assign(req.body.listItem, {
     _owner: req.user._id
   })
-  Item.create(item)
-    .then(item =>
+  listItem.create(listItem)
+    .then(listItem =>
       res.status(201)
         .json({
-          item: item.toJSON({ virtuals: true, user: req.user })
+          listItem: listItem.toJSON({ virtuals: true, user: req.user })
         }))
     .catch(next)
 }
 
 const update = (req, res, next) => {
-  delete req.body.item._owner  // disallow owner reassignment.
+  delete req.body.listItem._owner  // disallow owner reassignment.
 
-  req.item.update(req.body.item)
+  req.listItem.update(req.body.listItem)
     .then(() => res.sendStatus(204))
     .catch(next)
 }
 
 const destroy = (req, res, next) => {
-  req.item.remove()
+  req.listItem.remove()
     .then(() => res.sendStatus(204))
     .catch(next)
 }
@@ -59,6 +59,6 @@ module.exports = controller({
 }, { before: [
   { method: setUser, only: ['index', 'show'] },
   { method: authenticate, except: ['index', 'show'] },
-  { method: setModel(Item), only: ['show'] },
-  { method: setModel(Item, { forUser: true }), only: ['update', 'destroy'] }
+  { method: setModel(listItem), only: ['show'] },
+  { method: setModel(listItem, { forUser: true }), only: ['update', 'destroy'] }
 ] })
