@@ -19,17 +19,23 @@ const itemSchema = new mongoose.Schema({
   active: {
     type: Boolean,
     required: true
+  },
+  private: {
+    type: Boolean,
+    required: false,
+    default: false
   }
-}, {
-  timestamps: true,
-  toObject: { virtuals: true },
-  toJson: { virtuals: true },
-  transform: function (doc, ret, options) {
-    const userId = (options.user && options.user._id) || false
-    ret.editable = userId && userId.equals(doc._owner)
-    return ret
-  }
-})
+},
+  {
+    timestamps: true,
+    toObject: { virtuals: true },
+    toJson: { virtuals: true },
+    transform: function (doc, ret, options) {
+      const userId = (options.user && options.user._id) || false
+      ret.editable = userId && userId.equals(doc._owner)
+      return ret
+    }
+  })
 
 const Item = mongoose.model('Item', itemSchema)
 

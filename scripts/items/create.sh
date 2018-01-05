@@ -13,6 +13,7 @@ curl "${API}${URL_PATH}" \
       "name": "'"${NAME}"'",
       "notes": "'"${NOTES}"'",
       "active": "'"${ACTIVE}"'"
+      "private": "'"${PRIVATE}"'"
     }
   }'
 
