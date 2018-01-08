@@ -17,6 +17,7 @@ module.exports = require('lib/wiring/routes')
 .post('/sign-in', 'users#signin')
 .delete('/sign-out/:id', 'users#signout')
 .patch('/change-password/:id', 'users#changepw')
-.resources('users', { only: ['index', 'show'] })
+.get('/privateFind', 'items#privateFind')
+.resources('users', { only: ['index', 'show', 'showShare'] })
 
 // all routes created
