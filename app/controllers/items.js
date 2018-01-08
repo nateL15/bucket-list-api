@@ -50,15 +50,25 @@ const destroy = (req, res, next) => {
     .catch(next)
 }
 
+const privateFind = (req, res, next) => {
+  Item.find({private: false})
+    .then(items => res.json({
+      items: items.map((e) =>
+        e.toJSON({ virtuals: true, user: req.user }))
+    }))
+    .catch(next)
+}
+
 module.exports = controller({
   index,
   show,
   create,
   update,
-  destroy
+  destroy,
+  privateFind
 }, { before: [
-  { method: setUser, only: ['index', 'show'] },
-  { method: authenticate, except: ['index', 'show'] },
+  { method: setUser, only: ['index', 'show', 'privateFind'] },
+  { method: authenticate, except: ['index', 'show', 'privateFind'] },
   { method: setModel(Item), only: ['show'] },
   { method: setModel(Item, { forUser: true }), only: ['update', 'destroy'] }
 ] })
